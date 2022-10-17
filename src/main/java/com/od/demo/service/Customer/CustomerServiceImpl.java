@@ -44,10 +44,10 @@ public class CustomerServiceImpl implements CustomerService {
 //            request.put("idType",idType);
 //            request.put("idNumber",idNumber);
 
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity requestEntity = new HttpEntity<>(headers);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//        HttpHeaders headers = new HttpHeaders();
+//        HttpEntity requestEntity = new HttpEntity<>(headers);
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
@@ -67,6 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //masked id number
         String tempString = response.getCustomer().getIdentification().getIdNumber();
+       //todo change using enhance for loop
         for (int i = 0; i < response.getCustomer().getIdentification().getIdNumber().length() - 4; i++) {
 
             char j = response.getCustomer().getIdentification().getIdNumber().charAt(i);
@@ -74,7 +75,7 @@ public class CustomerServiceImpl implements CustomerService {
             tempString = tempString.replace(j, '*');
             System.out.println(j);
         }
-        System.out.println(tempString);
+
         identificationDto.setIdNumber(tempString);
 
         //set details object

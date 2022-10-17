@@ -1,15 +1,23 @@
 package com.od.demo.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.od.demo.model.Order.OrderDto;
+import com.od.demo.model.Order.OrderRequest;
+import com.od.demo.model.Order.OrderResponse;
+import com.od.demo.service.OrderService.OrderService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
 
-    @GetMapping("/test")
-    public String test(){
-        return "hello worlds";
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @PostMapping()
+    public OrderResponse CreateOrder(@RequestBody OrderRequest orderRequest){
+        return orderService.createOrder(orderRequest);
     }
 }
