@@ -1,10 +1,8 @@
 package com.od.demo.service.Customer;
 
+import com.od.demo.mapper.Customer.*;
 import com.od.demo.model.Customer.*;
 import com.od.demo.service.Customer.model.CustResponse;
-import com.od.demo.service.Customer.model.Customer.ContactResponse;
-import com.od.demo.service.Customer.model.Customer.CustomerResponse;
-import com.od.demo.service.Customer.model.Customer.Role.RoleResponse;
 import com.od.demo.service.Customer.model.Customer.Role.RolesResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -31,9 +29,19 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     private final RestTemplate restTemplate;
+    private final DetailsMapper detailsMapper;
+    private final CustomerMapper customerMapper;
+    private final RoleMapper roleMapper;
+    private final IdentificationMapper identificationMapper;
+    private final ContactMapper contactMapper;
 
-    public CustomerServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+    public CustomerServiceImpl(RestTemplateBuilder restTemplateBuilder, DetailsMapper detailsMapper, CustomerMapper customerMapper, RoleMapper roleMapper, IdentificationMapper identificationMapper, ContactMapper contactMapper) {
         this.restTemplate = restTemplateBuilder.build();
+        this.detailsMapper = detailsMapper;
+        this.customerMapper = customerMapper;
+        this.roleMapper = roleMapper;
+        this.identificationMapper = identificationMapper;
+        this.contactMapper = contactMapper;
     }
 
     @Override
@@ -60,11 +68,6 @@ public class CustomerServiceImpl implements CustomerService {
         response = restTemplate.getForObject(builder.toUriString(), CustResponse.class);
 
 
-        //set identification object
-        IdentificationDto identificationDto = new IdentificationDto();
-
-        identificationDto.setIdType(response.getCustomer().getIdentification().getIdType());
-
         //masked id number
         String tempString = response.getCustomer().getIdentification().getIdNumber();
        //todo change using enhance for loop
@@ -75,39 +78,27 @@ public class CustomerServiceImpl implements CustomerService {
             tempString = tempString.replace(j, '*');
             System.out.println(j);
         }
-
+        IdentificationDto identificationDto = new IdentificationDto();
+        identificationDto.setIdType(response.getCustomer().getIdentification().getIdType());
         identificationDto.setIdNumber(tempString);
-
-        //set details object
-        DetailsDto detailsDto = new DetailsDto();
-        detailsDto.setDisplayName(response.getCustomer().getDetails().getName());
-        detailsDto.setDateOfBirth(response.getCustomer().getDetails().getDateOfBirth());
-        detailsDto.setEmail(response.getCustomer().getDetails().getEmail());
-
-        //set contact object
-        List<ContactDto> contactDtos = new ArrayList<>();
-
-        response.getCustomer().getContact().forEach(contactResponse -> {
-            ContactDto tempContactDto = new ContactDto();
-            tempContactDto.setType(contactResponse.getType());
-            tempContactDto.setValue(contactResponse.getValue());
-            contactDtos.add(tempContactDto);
-
-        });
-
 
         //trigger get role method
         List<RoleDto> roleResponse = getCustomerRole(response.getCustomer().getId());
 
+        List<ContactDto> contactDtos = new ArrayList<>();
+
         CustomerDto customerDto = new CustomerDto();
         customerDto.setId(response.getCustomer().getId());
         customerDto.setIdentification(identificationDto);
-        customerDto.setDetails(detailsDto);
-        customerDto.setContact(contactDtos);
+        customerDto.setDetails(detailsMapper.toDto(response.getCustomer().getDetails()));
+        customerDto.setContact(response.getCustomer().getContact().stream().map(contactMapper::toDto).collect(Collectors.toList()));
         customerDto.setRoles(roleResponse);
 
 
-        return customerDto;
+
+
+        return   customerDto;
+
 
 
     }
@@ -124,21 +115,21 @@ public class CustomerServiceImpl implements CustomerService {
                 .queryParam("customerId", customerId);
 
         RolesResponse response;
-        List<RoleDto> roleDtos = new ArrayList<RoleDto>();
+//        List<RoleDto> roleDtos = new ArrayList<RoleDto>();
 
 
         //to get customer information
         response = restTemplate.getForObject(builder.toUriString(), RolesResponse.class);
 
         //set role object
-        response.getRoles().forEach(roleResponse -> {
-            RoleDto tempRoleDto = new RoleDto();
-            tempRoleDto.setCode(roleResponse.getCode());
-            tempRoleDto.setDescription(roleResponse.getDescription());
-            roleDtos.add(tempRoleDto);
-            ;
-        });
-
+//        response.getRoles().forEach(roleResponse -> {
+//            RoleDto tempRoleDto = new RoleDto();
+//            tempRoleDto.setCode(roleResponse.getCode());
+//            tempRoleDto.setDescription(roleResponse.getDescription());
+//            roleDtos.add(tempRoleDto);
+//            ;
+//        });
+        List<RoleDto> roleDtos = response.getRoles().stream().map(roleMapper::toDto).collect(Collectors.toList());
         return roleDtos;
     }
 

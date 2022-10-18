@@ -1,5 +1,6 @@
 package com.od.demo.model.Order;
 
+import com.od.demo.entity.CustOrder;
 import com.od.demo.model.Customer.CustomerDto;
 import lombok.Data;
 import org.aspectj.weaver.ast.Or;
@@ -10,5 +11,5 @@ import java.util.List;
 public class OrderRequest {
 
     CustomerDto customer;
-    List<OrderDto> order;
+    List<CustOrder> order;
 }
