@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 
 @Setter
@@ -22,8 +24,11 @@ public class CustOrder {
     private Integer id;
 
     private String customerId;
+
+
     private String code;
     private Integer trxrefid;
+
     private Integer quantity;
 
     private Status status;

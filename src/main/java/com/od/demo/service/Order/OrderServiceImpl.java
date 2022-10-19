@@ -8,8 +8,7 @@ import com.od.demo.entity.Transaction;
 import com.od.demo.mapper.CustOrderMapper;
 import com.od.demo.mapper.PageMapper;
 import com.od.demo.mapper.TransactionMapper;
-import com.od.demo.model.CustOrderDto;
-import com.od.demo.model.Order.OrderRequest;
+import com.od.demo.model.Order.CustOrderDto;
 import com.od.demo.model.Order.OrderResponse;
 
 import com.od.demo.model.Order.UpdateOrderStatusRequest;
@@ -48,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse createOrder(OrderRequest orderRequest) {
+    public OrderResponse createOrder(String customerId, List<CustOrderDto> custOrderDto) {
 
 
         //save data into db
@@ -66,14 +65,14 @@ public class OrderServiceImpl implements OrderService {
 
         //save order
         List<CustOrderDto> CustOrderlist = new ArrayList<>();
-        if (orderRequest.getOrder().size() > 0) {
-            orderRequest.getOrder().forEach(orderDto -> {
+        if (custOrderDto != null && custOrderDto.size() > 0) {
+            custOrderDto.forEach(orderDto -> {
 
                 CustOrder custOrder = new CustOrder();
                 custOrder.setCode(orderDto.getCode());
-                custOrder.setCustomerId(orderRequest.getCustomer().getId());
+                custOrder.setCustomerId(customerId);
                 custOrder.setQuantity(orderDto.getQuantity());
-//                custOrder.setStatus("Submitted");
+                custOrder.setStatus(Status.SUBMITTED);
                 custOrder.setTrxrefid(tempId);
 
 
@@ -86,49 +85,25 @@ public class OrderServiceImpl implements OrderService {
 
             });
 
-        }
+
 
         //set order response
         OrderResponse orderResponse = new OrderResponse();
         orderResponse.setTransaction(transactionMapper.toDto(transaction));
         orderResponse.setOrder(CustOrderlist);
 
-
-//        OrderResponse orderModel = new OrderResponse();
-//        orderModel.setMeta(response);
-
-        //set order
-//        System.out.print(orderRequest.toString());
-//        orderModel.setOrder(orderRequest.getOrder());
+        return orderResponse;
 
 
-        //set transaction model
-//        TransactionDto transactionDto = new TransactionDto();
-//        Random rand = new Random();
-//
-//        transactionDto.setTrxRefId(rand.nextInt());
-//        transactionDto.setStatus("Submitted");
-//        transactionDto.setRemarks("Submitted");
-//        transactionDto.setCreatedAt();
-//
-//
-//
-//
-//        //save order into db
-//        if (orderRequest.getOrder().size() > 0) {
-//            orderRequest.getOrder().forEach(orderDto -> {
-//
-//                CustOrder custOrder = new CustOrder();
-//                custOrder.setCode(orderDto.getCode());
-//                custOrder.setCustomerId(orderRequest.getCustomer().getId());
-//                custOrder.setQuantity(orderDto.getQuantity());
-//                custOrder.setStatus("Submitted");
-//                orderRepository.save(custOrder);
-//            });
-//
-//        }
+    }else
 
-        //save to backend host api
+    {
+        throw new NullPointerException();
+    }
+
+
+
+    //save to backend host api
 //        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(purchaseOrderURL)
 //                .queryParam("customerId", customerId);
 
@@ -137,8 +112,8 @@ public class OrderServiceImpl implements OrderService {
 
 //use update status service to change status in progress
 
-        return orderResponse;
-    }
+
+}
 
     @Override
     public ResponseEntity updateStatusOrder(Integer trxRefId, UpdateOrderStatusRequest updateOrderStatusRequest) {
