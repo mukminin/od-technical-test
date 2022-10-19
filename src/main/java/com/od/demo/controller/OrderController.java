@@ -6,7 +6,7 @@ import com.od.demo.model.Order.OrderRequest;
 import com.od.demo.model.Order.OrderResponse;
 import com.od.demo.model.Order.UpdateOrderStatusRequest;
 import com.od.demo.model.PageDto;
-import com.od.demo.service.OrderService.OrderService;
+import com.od.demo.service.Order.OrderService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;

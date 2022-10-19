@@ -1,4 +1,4 @@
-package com.od.demo.service.OrderService;
+package com.od.demo.service.Order;
 
 import com.od.demo.model.CustOrderDto;
 import com.od.demo.model.Order.OrderRequest;

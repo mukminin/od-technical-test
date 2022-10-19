@@ -12,7 +12,7 @@ import java.util.List;
 public class OrderResponse {
 
         Meta meta;
-        Transaction transaction;
+        TransactionDto transaction;
         List<CustOrderDto> order;
 
 }

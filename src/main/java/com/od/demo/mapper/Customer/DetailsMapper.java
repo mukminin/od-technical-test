@@ -8,6 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface DetailsMapper {
 
-    @Mapping(source="name",target="displayName")
+    @Mapping(source = "name", target = "displayName")
    DetailsDto toDto(DetailsResponse detailsResponse);
 }

@@ -1,10 +1,13 @@
-package com.od.demo.service.OrderService;
+package com.od.demo.service.Order;
 
 import com.od.demo.common.ResponseHandler;
+import com.od.demo.common.enums.Status;
+import com.od.demo.common.enums.StatusDescription;
 import com.od.demo.entity.CustOrder;
 import com.od.demo.entity.Transaction;
 import com.od.demo.mapper.CustOrderMapper;
 import com.od.demo.mapper.PageMapper;
+import com.od.demo.mapper.TransactionMapper;
 import com.od.demo.model.CustOrderDto;
 import com.od.demo.model.Order.OrderRequest;
 import com.od.demo.model.Order.OrderResponse;
@@ -32,14 +35,16 @@ public class OrderServiceImpl implements OrderService {
     public final RestTemplate restTemplate;
 
     private final CustOrderMapper custOrderMapper;
+    private final TransactionMapper transactionMapper;
 
     public static final String purchaseOrderURL = "https://avocado.od-tech.my/api/purchase";
 
-    public OrderServiceImpl(OrderRepository orderRepository, TransactionRepository transactionRepository, RestTemplateBuilder restTemplateBuilder, CustOrderMapper custOrderMapper) {
+    public OrderServiceImpl(OrderRepository orderRepository, TransactionRepository transactionRepository, RestTemplateBuilder restTemplateBuilder, CustOrderMapper custOrderMapper, TransactionMapper transactionMapper) {
         this.orderRepository = orderRepository;
         this.transactionRepository = transactionRepository;
         this.restTemplate = restTemplateBuilder.build();
         this.custOrderMapper = custOrderMapper;
+        this.transactionMapper = transactionMapper;
     }
 
     @Override
@@ -52,9 +57,9 @@ public class OrderServiceImpl implements OrderService {
         //set random id for transaction
         Transaction transaction = new Transaction();
         Random rand = new Random();
-        Integer tempId = rand.nextInt();
-        transaction.setStatus("SUBMITTED");
-        transaction.setStatusDescription("Submitted");
+        Integer tempId = rand.nextInt(1000000000);
+        transaction.setStatus(Status.SUBMITTED);
+        transaction.setStatusDescription(StatusDescription.Submitted);
         transaction.setTrxrefid(tempId);
         transactionRepository.save(transaction);
 
@@ -85,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
 
         //set order response
         OrderResponse orderResponse = new OrderResponse();
-        orderResponse.setTransaction(transaction);
+        orderResponse.setTransaction(transactionMapper.toDto(transaction));
         orderResponse.setOrder(CustOrderlist);
 
 
