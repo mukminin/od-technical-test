@@ -1,6 +1,8 @@
 package com.od.demo.entity;
 
 
+import com.od.demo.common.enums.Status;
+import com.od.demo.common.enums.StatusDescription;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,9 +26,9 @@ public class Transaction {
 
     private Integer trxrefid;
 
-    //todo change to enum
-    private String status;
-    private String statusDescription;
+
+    private Status status;
+    private StatusDescription statusDescription;
     private String remarks;
     @CreationTimestamp
     @Column(updatable = false)

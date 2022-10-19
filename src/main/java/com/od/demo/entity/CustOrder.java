@@ -1,5 +1,6 @@
 package com.od.demo.entity;
 
+import com.od.demo.common.enums.Status;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,8 +25,8 @@ public class CustOrder {
     private String code;
     private Integer trxrefid;
     private Integer quantity;
-    //todo change to enum
-    private String  status;
+
+    private Status status;
     @CreationTimestamp
     @Column(updatable = false)
     private OffsetDateTime createdAt;
